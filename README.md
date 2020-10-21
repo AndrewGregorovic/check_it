@@ -20,3 +20,26 @@ The development of this project is being tracked with the Github Projects sectio
 
 ## Wireframes
 
+##### Landing Page
+![Landing Page Wireframe](docs/wireframes/landing_page.png)
+
+##### Log In/Sign Up Page
+![Log In/Sign Up Page Wireframe](docs/wireframes/login_signup_page.png)
+
+##### Dashboard Page
+![Dashboard Page Wireframe](docs/wireframes/dashboard_page.png)
+
+##### User Profile Page
+![User Profile Page Wireframe](docs/wireframes/user_profile_page.png)
+
+##### Saved Lists Page
+![Saved Lists Page Wireframe](docs/wireframes/saved_lists_page.png)
+
+##### Create List Page
+![Create List Page Wireframe](docs/wireframes/create_list_page.png)
+
+##### Edit List Page
+![Edit List Page Wireframe](docs/wireframes/edit_list_page.png)
+
+##### View List Page
+![View List Page Wireframe](docs/wireframes/view_list_page.png)

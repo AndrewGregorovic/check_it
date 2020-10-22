@@ -83,6 +83,6 @@ To implement the ability to rearrange list items, either allow each item to be d
 ![Edit List Page Wireframe](docs/wireframes/edit_list_page.png)
 
 #### View List Page
-This page is viewed when a list is clicked on. Clicking list items on this page will toggle their checkbox, this is the only page other than the dashboard where list items can be toggled between checked and not checked. Clicking back takes the user back to their dashboard page.
+This page is viewed when a list is clicked on. Clicking list items on this page will toggle their checkbox, this is the only page other than the dashboard where list items can be toggled between checked and not checked. The reset button at the top right of the list view can be clicked to reset the completion state of all the lists items, i.e. it marks everything as not completed. Clicking back takes the user back to their dashboard page.
 
 ![View List Page Wireframe](docs/wireframes/view_list_page.png)

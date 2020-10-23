@@ -1,14 +1,14 @@
-# Checklist App
+# Check It :white_check_mark:
 
 This app aims to help users manage checklists of tasks to avoid the hassle of having to remember everything in our busy lives. The app will allow you to:
-- Create new lists with an accompanying title, description (optional) and thumbnail image (optional)
-- Edit current lists, including the ability to:
-    - Check items off after you complete them
-    - Reset lists to uncheck all list items
-    - Add list items
-    - Delete list items
-    - Rearrange list items
-- Delete lists
+- [x] Create new lists with an accompanying title, description (optional) and thumbnail image (optional)
+- [x] Edit current lists, including the ability to:
+    - [x] Check items off after you complete them
+    - [x] Reset lists to uncheck all list items
+    - [x] Add list items
+    - [x] Delete list items
+    - [x] Rearrange list items
+- [x] Delete lists
 
 You will also be able to mark lists to be repeated daily or weekly which will automatically reset the list accordingly.
 
@@ -19,6 +19,7 @@ Using the app requires an account which allows your list data to be synchronised
 ## Table of Contents
 - [Installation](#installation)
 - [Implementation Plan](#implementation-plan)
+- [CI/CD](#ci-cd)
 - [Wireframes](#wireframes)
 
 ## Installation
@@ -36,6 +37,14 @@ Using the app requires an account which allows your list data to be synchronised
 The development of this project is being tracked with the Github Projects section of this repository. The link is included below for easy navigation to the project board,
 
 [https://github.com/AndrewGregorovic/check_it/projects/1](https://github.com/AndrewGregorovic/check_it/projects/1)
+
+## CI/CD
+
+The CI/CD workflow for this project makes use of github actions to perform the set up for jobs and runs on the latest stable version of Ubuntu.
+
+> Currently only the continuous integration part of the workflow is implemented as the project is in it's initial stages.
+
+The workflow is initiated when commits are pushed to the master branch, it uses Python 3.9.0 to run the automated unit tests and code checks to determine if the code is in working order.
 
 ## Wireframes
 

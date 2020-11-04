@@ -42,7 +42,7 @@ The development of this project is being tracked with the Github Projects sectio
 
 The CI/CD workflow for this project makes use of github actions to perform the set up for jobs and runs on the latest stable version of Ubuntu.
 
-> Currently only the continuous integration part of the workflow is implemented as the project is in it's initial stages.
+> Currently only the continuous integration part of the workflow is implemented while the project is in it's initial stages.
 
 The workflow is initiated when commits are pushed to the master branch, it uses Python 3.9.0 to run the automated unit tests and code checks to determine if the code is in working order.
 

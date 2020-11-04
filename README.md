@@ -21,6 +21,7 @@ Using the app requires an account which allows your list data to be synchronised
 - [Implementation Plan](#implementation-plan)
 - [CI/CD](#ci-cd)
 - [Wireframes](#wireframes)
+- [Database Schema](#database-schema)
 
 ## Installation
 
@@ -95,3 +96,12 @@ To implement the ability to rearrange list items, either allow each item to be d
 This page is viewed when a list is clicked on. Clicking list items on this page will toggle their checkbox, this is the only page other than the dashboard where list items can be toggled between checked and not checked. The reset button at the top right of the list view can be clicked to reset the completion state of all the lists items, i.e. it marks everything as not completed. Clicking back takes the user back to their dashboard page.
 
 ![View List Page Wireframe](docs/wireframes/view_list_page.png)
+
+## Database Schema
+
+The schema for the database used in this app is shown below.
+- It is optional for a user to create any checklists but each checklist must have one user who created it.
+- Each checklist must have at least 1 item in it.
+- Each item is only used in 1 list. This isn't necessary as a one to one relationship but it makes sense to put it this way since adding items to a checklist is essentially creating a new item with a new id number.
+
+![Database Schema](docs/database/database_schema.png)

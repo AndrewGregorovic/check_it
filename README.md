@@ -22,6 +22,7 @@ Using the app requires an account which allows your list data to be synchronised
 - [CI/CD](#ci-cd)
 - [Wireframes](#wireframes)
 - [Database Schema](#database-schema)
+- [Endpoint Documentation](#endpoint-documentation)
 
 ## Installation
 
@@ -105,3 +106,9 @@ The schema for the database used in this app is shown below.
 - Each item is only used in 1 list. This isn't necessary as a one to one relationship but it makes sense to put it this way since adding items to a checklist is essentially creating a new item with a new id number.
 
 ![Database Schema](docs/database/database_schema.png)
+
+## Endpoint Documentation
+
+To view the included endpoint documentation for this app you will need to do one of the following:
+- Go to [https://editor.swagger.io/#](https://editor.swagger.io/#), select File > Import file and then select the `swagger.yml` file located in the `docs` folder.
+- If your chosen IDE has an OpenAPI/Swagger viewer plugin then you can simply install it, open the `swagger.yml` file in your IDE and use the plugin to view the documentation.

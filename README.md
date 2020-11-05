@@ -103,7 +103,7 @@ This page is viewed when a list is clicked on. Clicking list items on this page 
 The schema for the database used in this app is shown below.
 - It is optional for a user to create any checklists but each checklist must have one user who created it.
 - Each checklist must have at least 1 item in it.
-- Each item is only used in 1 list. This isn't necessary as a one to one relationship but it makes sense to put it this way since adding items to a checklist is essentially creating a new item with a new id number.
+- Each item is only used in 1 list. A single item cannot be used multiple times whether in the same list or multiple lists, this is because the checked state of each item needs to be tracked independently.
 
 ![Database Schema](docs/database/database_schema.png)
 

@@ -1,6 +1,6 @@
 # Check It :white_check_mark:
 
-This app aims to help users manage checklists of tasks to avoid the hassle of having to remember everything in our busy lives. The app will allow you to:
+This app aims to help users manage checklists of tasks to avoid the hassle of having to remember everything in our busy lives. The core functionality of the app will allow you to:
 - [x] Create new lists with an accompanying title, description (optional) and thumbnail image (optional)
 - [x] Edit current lists, including the ability to:
     - [x] Check items off after you complete them
@@ -9,8 +9,14 @@ This app aims to help users manage checklists of tasks to avoid the hassle of ha
     - [x] Delete list items
     - [x] Rearrange list items
 - [x] Delete lists
+- [x] Set lists to be repeated daily or weekly which automatically resets the list at the appropriate time.
 
-You will also be able to mark lists to be repeated daily or weekly which will automatically reset the list accordingly.
+Additional functionality that may not be implemented in the initial release includes:
+- [] Group lists, including the ability to:
+    - [] Invite other Check It users to the list
+    - [] Assign each list item to a specific member of the group list for them to complete or leave it unassigned so that anyone can complete it
+    - [] Tracking for who completed each list item and when
+- [] Reminders that can be set to a certain time of day to remind you of any outstanding tasks that require your attention.
 
 Using the app requires an account which allows your list data to be synchronised between multiple devices so that you can use the app on your phone or computer and pick up right where you left off.
 

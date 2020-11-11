@@ -94,15 +94,28 @@ This card can be created on top of the page currently being viewed or can be a s
 
 ![Create List Page Wireframe](docs/wireframes/create_list_page.png)
 
-#### Edit List Page
-To implement the ability to rearrange list items, either allow each item to be dragged up and down with the mouse or need to add in up/down buttons that appear for the item currently moused over which can move the item in the appropriate direction.
-
-![Edit List Page Wireframe](docs/wireframes/edit_list_page.png)
-
-#### View List Page
+#### View Personal List Page
 This page is viewed when a list is clicked on. Clicking list items on this page will toggle their checkbox, this is the only page other than the dashboard where list items can be toggled between checked and not checked. The reset button at the top right of the list view can be clicked to reset the completion state of all the lists items, i.e. it marks everything as not completed. Clicking back takes the user back to their dashboard page.
 
-![View List Page Wireframe](docs/wireframes/view_list_page.png)
+![View Personal List Page Wireframe](docs/wireframes/view_personal_list_page.png)
+
+#### Edit Personal List Page
+To implement the ability to rearrange list items, either allow each item to be dragged up and down with the mouse or need to add in up/down buttons that appear for the item currently moused over which can move the item in the appropriate direction.
+
+![Edit Personal List Page Wireframe](docs/wireframes/edit_personal_list_page.png)
+
+#### Group List Invite Send/Receive
+
+![Group List Invite Send Wireframe](docs/wireframes/group_list_send_invite.png)
+![Group List Invite Receive Wireframe](docs/wireframes/group_list_receive_invite.png)
+
+#### View Group List Page
+
+![View Group List Page Wireframe](docs/wireframes/view_group_list_page.png)
+
+#### Edit Group List Page
+
+![Edit Group List Page Wireframe](docs/wireframes/edit_group_list_page.png)
 
 ## Database Schema
 

@@ -12,11 +12,11 @@ This app aims to help users manage checklists of tasks to avoid the hassle of ha
 - [x] Set lists to be repeated daily or weekly which automatically resets the list at the appropriate time.
 
 Additional functionality that may not be implemented in the initial release includes:
-- [] Group lists, including the ability to:
-    - [] Invite other Check It users to the list
-    - [] Assign each list item to a specific member of the group list for them to complete or leave it unassigned so that anyone can complete it
-    - [] Tracking for who completed each list item and when
-- [] Reminders that can be set to a certain time of day to remind you of any outstanding tasks that require your attention.
+- [ ] Group lists, including the ability to:
+    - [ ] Invite other Check It users to the list
+    - [ ] Assign each list item to a specific member of the group list for them to complete or leave it unassigned so that anyone can complete it
+    - [ ] Tracking for who completed each list item and when
+- [ ] Reminders that can be set to a certain time of day to remind you of any outstanding tasks that require your attention.
 
 Using the app requires an account which allows your list data to be synchronised between multiple devices so that you can use the app on your phone or computer and pick up right where you left off.
 
@@ -64,12 +64,12 @@ The app name at the top left should link back to this page if there is no logged
 ![Landing Page Wireframe](docs/wireframes/landing_page.png)
 
 #### Log In/Sign Up Page
-Basic log in or sign up page, the background could be another screenshot of the app or some other stylish designs so that it isn't a plain white background.
+Basic log in or sign up page, the background could be another screenshot of the app or some other stylish designs so that it isn't a plain white background. Rather than a separate page, this could be a card or window that appears on top of the landing page.
 
 ![Log In/Sign Up Page Wireframe](docs/wireframes/login_signup_page.png)
 
 #### Dashboard Page
-The dashboard is seen when the "Today's lists" option is selected (it is selected by default and it should be highlighted or something to indicate when selected). The arrows are used when there's multiple lists in each category for the user to navigate between while staying on the dashboard. The circles by each checklist name are optional thumbnail images that can be uploaded for each list.
+The dashboard shows the Daily and Weekly lists for the current user. The arrows are used when there's multiple lists in each category for the user to navigate between while staying on the dashboard. The circles by each checklist name are optional thumbnail images that can be uploaded for each list.
 
 The circle by the user name in the top right is the user's profile picture, the picture + user name when clicked will show a dropdown with options to view profile details or log out.
 
@@ -78,19 +78,23 @@ If lists have more items than can be viewed on the screen, make the list scrolla
 ![Dashboard Page Wireframe](docs/wireframes/dashboard_page.png)
 
 #### User Profile Page
-Displays the different pieces of profile information. The user name, name and email fields are just text when viewing the profile but when edit profile is clicked the fields become editable. The change password section and button to change profile picture is only visible when edit profile is clicked. While editing profile information the edit profile button becomes a save profile button. The back button returns the user to their dashboard page.
+Displays the different pieces of profile information. The user name, name and email fields are editable text fields. The box under the Password section is only visible when the Change Password button is clicked.
+
+When changes are made to any part of the user's account details the back button at the bottom of the page is replaced by two additional buttons, one to save all the changes and another to cancel the changes. The back button returns the user to their dashboard page.
+
+Uploading a new profile image is separate to changing any other account details and takes effect immediately after uploading. It does not count as a change that needs to be saved in the same way you would need to click the save button if a user wanted to change their name for example.
 
 ![User Profile Page Wireframe](docs/wireframes/user_profile_page.png)
 
 #### Saved Lists Page
-This is seen when the "All lists" option is selected (it should be highlighted or something to indicate that). There is another set of options that show to allow the user to filter their lists (again needs some sort of indication of being selected). Having a large number of lists will grow the list down and create a vertical scrollbar.
+This displays all the lists that the user is currently linked to, this includes their personal lists and group lists whether they are the list owner or just a member. There is set of options that show to allow the user to filter their lists (needs some sort of indication of being selected). Having a large number of lists will grow the list down and create a vertical scrollbar.
 
-The whole tile for each list will link to the view list page for that list. The top right of each tile indicates if the list repeats daily, weekly or not at all, if not at all there is no daily/weekly label.
+The whole tile for each list will link to the view list page for that list. The top right of each tile indicates if the list repeats daily, weekly or not at all, if not at all there is no daily/weekly label. There is also a label for group lists, again the absence of a group label means that it is a personal list.
 
 ![Saved Lists Page Wireframe](docs/wireframes/saved_lists_page.png)
 
 #### Create List Page
-This card can be created on top of the page currently being viewed or can be a separate page with something in the background. When create list is clicked it takes the user to the edit list page for the newly created list.
+This card/window can be created on top of the page currently being viewed or can be a separate page with something in the background. When create list is clicked it takes the user to the edit list page for the newly created list so that they can begin adding items to it or include any of the optional elements.
 
 ![Create List Page Wireframe](docs/wireframes/create_list_page.png)
 
@@ -105,15 +109,20 @@ To implement the ability to rearrange list items, either allow each item to be d
 ![Edit Personal List Page Wireframe](docs/wireframes/edit_personal_list_page.png)
 
 #### Group List Invite Send/Receive
+The card/window for creating and sending an invite can be created on top of the view group list page as that is the only place where you can invite people from. The email address is used to get the recipient's user id.
+
+The card/window for receiving an invite can be created on top of any page when the user clicks to view the invite, not sure where to put this but there needs to be some sort of notification indicator or something to tell the user if they have a pending invite.
 
 ![Group List Invite Send Wireframe](docs/wireframes/group_list_send_invite.png)
 ![Group List Invite Receive Wireframe](docs/wireframes/group_list_receive_invite.png)
 
 #### View Group List Page
+Similar to the page for personal lists however it includes additional details aimed towards group lists. There is no reset button for group lists currently as I feel its much less likely that a user would want to reset a group list and there is still the repeat frequency option for group lists that need to be reset regularly.
 
 ![View Group List Page Wireframe](docs/wireframes/view_group_list_page.png)
 
 #### Edit Group List Page
+Again similar to the edit personal list page, only difference is the additional option to assign group members to each list item.
 
 ![Edit Group List Page Wireframe](docs/wireframes/edit_group_list_page.png)
 

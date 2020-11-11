@@ -3,18 +3,24 @@ info:
   version: "1.0.0"
   title: "Check It"
 tags:
-- name: "user"
+- name: "users"
   description: "User operations"
 - name: "lists"
   description: "Managing checklists"
-- name: "item"
-  description: "Allows toggling item status outside of editing lists"
+- name: "items"
+  description: "Managing checklist items"
+- name: "invites"
+  description: "Managing invites to group lists"
+- name: "userslists"
+  description: "Manages user-list links"
+- name: "listsitems"
+  description: "Manages list-item links"
 paths:
   /user:
     post:
       tags:
-      - "user"
-      summary: "Creates new user"
+      - "users"
+      summary: "Creates a new user"
       description: "Sends details required to create a new user"
       operationId: "createUser"
       produces:
@@ -35,70 +41,73 @@ paths:
               type: "string"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successfully created a new user"
+        "400":
+          description: "Invalid input"
   /user/login:
     get:
       tags:
-      - "user"
-      summary: "Logs user into the system"
+      - "users"
+      summary: "Logs a user into the system"
       operationId: "loginUser"
       produces:
       - "application/json"
       parameters:
-      - name: "username"
-        in: "query"
-        description: "The username for login"
+      - name: "body"
+        in: "body"
+        description: "The user's email and password for login"
         required: true
-        type: "string"
-      - name: "password"
-        in: "query"
-        description: "The password for login in clear text"
-        required: true
-        type: "string"
+        schema:
+          type: "object"
+          properties:
+            email:
+              type: "string"
+            password:
+              type: "string"
       responses:
         "200":
-          description: "successful operation"
+          description: "User successfully logged in"
           schema:
             type: "string"
           headers:
             X-Rate-Limit:
               type: "integer"
               format: "int32"
-              description: "calls per hour allowed by the user"
+              description: "Calls per hour allowed by the user"
             X-Expires-After:
               type: "string"
               format: "date-time"
-              description: "date in UTC when token expires"
+              description: "Date in UTC when token expires"
         "400":
-          description: "Invalid username/password supplied"
+          description: "Invalid email/password"
   /user/logout:
     get:
       tags:
-      - "user"
-      summary: "Logs out current logged in user session"
+      - "users"
+      summary: "Logs out currently logged in user"
       operationId: "logoutUser"
       produces:
       - "application/json"
       responses:
         "200":
-          description: "successful operation"
+          description: "User successfully logged out"
   /user/{userId}:
     get:
       tags:
-      - "user"
-      summary: "Get user by user id"
+      - "users"
+      summary: "Get user details by user id"
       operationId: "getUserById"
       produces:
       - "application/json"
       parameters:
       - name: "userId"
         in: "path"
-        description: "The user id that needs to be fetched."
+        description: "The user id that needs to be fetched"
         required: true
         type: "string"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successfully fetched user details"
           schema:
             $ref: "#/definitions/User"
         "400":
@@ -107,8 +116,8 @@ paths:
           description: "User not found"
     patch:
       tags:
-      - "user"
-      summary: "Updated user"
+      - "users"
+      summary: "Updates user details"
       description: "This can only be done by the logged in user."
       operationId: "updateUser"
       produces:
@@ -116,26 +125,26 @@ paths:
       parameters:
       - name: "userId"
         in: "path"
-        description: "The user id that need to be updated"
+        description: "The user id of the user that needs to be updated"
         required: true
         type: "string"
       - in: "body"
         name: "body"
-        description: "Updated user object"
+        description: "Updated user details object"
         required: true
         schema:
           $ref: "#/definitions/User"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successfully updated user details"
         "400":
           description: "Invalid user id provided"
         "404":
           description: "User not found"
     delete:
       tags:
-      - "user"
-      summary: "Delete user"
+      - "users"
+      summary: "Deletes a user"
       description: "This can only be done by the logged in user."
       operationId: "deleteUser"
       produces:
@@ -143,12 +152,12 @@ paths:
       parameters:
       - name: "userId"
         in: "path"
-        description: "The user id that needs to be deleted"
+        description: "The user id of the user that needs to be deleted"
         required: true
         type: "integer"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successfully deleted user"
         "400":
           description: "Invalid user id provided"
         "404":
@@ -156,8 +165,8 @@ paths:
   /user/{userId}/uploadImage:
     post:
       tags:
-      - "user"
-      summary: "uploads an image"
+      - "users"
+      summary: "Uploads a profile image"
       operationId: "uploadUserImage"
       consumes:
       - "multipart/form-data"
@@ -166,18 +175,18 @@ paths:
       parameters:
       - name: "userId"
         in: "path"
-        description: "ID of user to update"
+        description: "The user id of the user uploading a new profile image"
         required: true
         type: "integer"
         format: "int64"
       - name: "file"
         in: "formData"
-        description: "file to upload"
+        description: "File to upload"
         required: true
         type: "file"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successfully uploaded the image"
           schema:
             $ref: "#/definitions/ApiResponse"
   /lists:
@@ -191,7 +200,7 @@ paths:
       parameters:
       - name: "userId"
         in: "body"
-        description: "ID of user to return lists"
+        description: "The user id that lists are being fetched for"
         required: true
         schema:
           type: "object"
@@ -201,19 +210,19 @@ paths:
               format: "int64"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successfully fetched the user's lists"
           schema:
             type: "array"
             items:
               $ref: "#/definitions/List"
         "400":
-          description: "Invalid ID supplied"
+          description: "Invalid user id"
         "404":
-          description: "List not found"
+          description: "No lists found for the user"
     post:
       tags:
       - "lists"
-      summary: "Add a new list to the database"
+      summary: "Adds a new list to the database"
       description: "Sends details required to create a new list"
       operationId: "addList"
       consumes:
@@ -230,28 +239,53 @@ paths:
           properties:
             name:
               type: "string"
-            repeatFrequency:
+            isGroup:
+              type: "boolean"
+            repeatId:
               type: "integer"
               format: "int32"
-            listItems:
-              type: "array"
-              items:
-                {}
       responses:
         "200":
-          description: "successful operation"
+          description: "Successfully created a new list"
         "400":
           description: "Invalid input"
-    patch:
+  /lists/{listId}:
+    get:
       tags:
       - "lists"
-      summary: "Update an existing list"
-      operationId: "updateList"
-      consumes:
-      - "application/json"
+      summary: "Get list by id"
+      operationId: "getListById"
       produces:
       - "application/json"
       parameters:
+      - name: "listId"
+        in: "path"
+        description: "Id of the list to fetch"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        "200":
+          description: "Successfully fetched the list"
+          schema:
+            $ref: "#/definitions/List"
+        "400":
+          description: "Invalid id"
+        "404":
+          description: "List not found"
+    patch:
+      tags:
+      - "lists"
+      summary: "Updates an existing list"
+      operationId: "updateList"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "listId"
+        in: "path"
+        description: "The list id of the list that needs to be updated"
+        required: true
+        type: "string"
       - in: "body"
         name: "body"
         description: "List object that needs to be updated"
@@ -260,62 +294,37 @@ paths:
           $ref: "#/definitions/List"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successfully updated the list"
         "400":
           description: "Invalid input"
-        "404":
-          description: "List not found"
-  /lists/{listId}:
-    get:
-      tags:
-      - "lists"
-      summary: "Find list by ID"
-      operationId: "getListById"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "listId"
-        in: "path"
-        description: "ID of list to return"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/List"
-        "400":
-          description: "Invalid ID supplied"
         "404":
           description: "List not found"
     delete:
       tags:
       - "lists"
       summary: "Deletes a list"
-      description: ""
       operationId: "deleteList"
       produces:
       - "application/json"
       parameters:
       - name: "listId"
         in: "path"
-        description: "List id to delete"
+        description: "The list id of the list to delete"
         required: true
         type: "integer"
         format: "int64"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successfully deleted the list"
         "400":
-          description: "Invalid ID supplied"
+          description: "Invalid id"
         "404":
           description: "List not found"
   /lists/{listId}/uploadImage:
     post:
       tags:
       - "lists"
-      summary: "uploads an image"
+      summary: "Uploads a thumbnail image for a list"
       operationId: "uploadListImage"
       consumes:
       - "multipart/form-data"
@@ -324,26 +333,27 @@ paths:
       parameters:
       - name: "listId"
         in: "path"
-        description: "ID of list to update"
+        description: "The list id of the list the image is for"
         required: true
         type: "integer"
         format: "int64"
       - name: "file"
         in: "formData"
-        description: "file to upload"
+        description: "File to upload"
         required: true
         type: "file"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successfully uploaded the image"
           schema:
             $ref: "#/definitions/ApiResponse"
-  /item:
-    patch:
+  /items:
+    post:
       tags:
-      - "item"
-      summary: "Toggle the status of an item"
-      operationId: "toggleItemStatus"
+      - "items"
+      summary: "Adds a new item to the database"
+      description: "Sends details required to create a new item"
+      operationId: "addItem"
       consumes:
       - "application/json"
       produces:
@@ -351,17 +361,243 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "ListItem object that needs status to be updated"
+        description: "Item object that needs to be added to the database"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            name:
+              type: "string"
+            status:
+              type: "boolean"
+            index:
+              type: "integer"
+              format: "int32"
+      responses:
+        "200":
+          description: "Successfully created a new item"
+        "400":
+          description: "Invalid input"
+  /items/{itemId}:
+    get:
+      tags:
+      - "items"
+      summary: "Get item by id"
+      operationId: "getItemById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "itemId"
+        in: "path"
+        description: "Id of the item to fetch"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        "200":
+          description: "Successfully fetched the item"
+          schema:
+            $ref: "#/definitions/Item"
+        "400":
+          description: "Invalid id"
+        "404":
+          description: "Item not found"
+    patch:
+      tags:
+      - "items"
+      summary: "Updates an existing item"
+      operationId: "updateItem"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "itemId"
+        in: "path"
+        description: "The item id of the item that needs to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Item object that needs to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/Item"
+      responses:
+        "200":
+          description: "Successfully updated the item"
+        "400":
+          description: "Invalid input"
+        "404":
+          description: "Item not found"
+    delete:
+      tags:
+      - "items"
+      summary: "Deletes an item"
+      description: ""
+      operationId: "deleteItem"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "itemId"
+        in: "path"
+        description: "The item id of the item to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        "200":
+          description: "Successfully deleted the item"
+        "400":
+          description: "Invalid id"
+        "404":
+          description: "Item not found"
+  /invites:
+    post:
+      tags:
+      - "invites"
+      summary: "Adds a new invite to the database"
+      description: "Sends details required to create a new invite"
+      operationId: "addInvite"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Invite object that needs to be added to the database"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            senderId:
+              type: "integer"
+              format: "int64"
+            receiverId:
+              type: "integer"
+              format: "int64"
+            listId:
+              type: "integer"
+              format: "int64"
+            message:
+              type: "string"
+      responses:
+        "200":
+          description: "Successfully created the invite"
+        "400":
+          description: "Invalid input"
+  /invites/{inviteId}:
+    get:
+      tags:
+      - "invites"
+      summary: "Get invite by id"
+      operationId: "getInviteById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inviteId"
+        in: "path"
+        description: "Id of invite to fetch"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        "200":
+          description: "Successfully fetched the invite"
+          schema:
+            $ref: "#/definitions/Invite"
+        "400":
+          description: "Invalid id"
+        "404":
+          description: "invite not found"
+    delete:
+      tags:
+      - "invites"
+      summary: "Deletes an invite"
+      operationId: "deleteInvite"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inviteId"
+        in: "path"
+        description: "The invite id of the invite to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        "200":
+          description: "Successfully deletd the invite"
+        "400":
+          description: "Invalid id"
+        "404":
+          description: "Invite not found"
+  /userslists:
+    post:
+      tags:
+      - "userslists"
+      summary: "Adds a new user-list link to the database"
+      description: "Sends details required to create a new user-list link"
+      operationId: "addUserList"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "User-list object that needs to be added to the database"
+        required: true
+        schema:
+          $ref: "#/definitions/UserList"
+      responses:
+        "200":
+          description: "Successfully added a new user-list link"
+        "400":
+          description: "Invalid input"
+  /listsitems:
+    post:
+      tags:
+      - "listsitems"
+      summary: "Adds a new list-item link to the database"
+      description: "Sends details required to create a new list-item link"
+      operationId: "addListItem"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "List-item object that needs to be added to the database"
         required: true
         schema:
           $ref: "#/definitions/ListItem"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successfully added a new list-item link"
         "400":
           description: "Invalid input"
+  /listsitems/{listitemId}:
+    delete:
+      tags:
+      - "listsitems"
+      summary: "Deletes a list-item link"
+      operationId: "deleteListItem"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "listitemId"
+        in: "path"
+        description: "The list-item id of the list-item link to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        "200":
+          description: "Successfully deletd the list-item link"
+        "400":
+          description: "Invalid id"
         "404":
-          description: "ListItem not found"
+          description: "List-item link not found"
 definitions:
   User:
     type: "object"
@@ -383,31 +619,75 @@ definitions:
         type: "string"
       profileImageUrl:
         type: "string"
+      timezoneId:
+        type: "integer"
+        format: "int32"
+      hasReminders:
+        type: "boolean"
+      reminderTime:
+        type: "integer"
+        format: "int32"
+  UserList:
+    type: "object"
+    required:
+    - "userId"
+    - "listId"
+    properties:
+      userId:
+        type: "integer"
+        format: "int64"
+      listId:
+        type: "integer"
+        format: "int64"
+      userlistId:
+        type: "integer"
+        format: "int64"
   List:
     type: "object"
     required:
     - "name"
     - "repeatFrequency"
-    - "listItems"
+    - "isGroup"
+    - "ownerId"
     properties:
       id:
         type: "integer"
         format: "int64"
       name:
         type: "string"
+      isGroup:
+        type: "boolean"
+      repeatId:
+        type: "integer"
+        format: "int32"
+      ownerId:
+        type: "integer"
+        format: "int64"
       description:
         type: "string"
       thumbnailUrl:
         type: "string"
-      repeatFrequency:
-        type: "integer"
-        format: "int32"
-      listItems:
-        type: "array"
-        items:
-          $ref: "#/definitions/ListItem"
   ListItem:
     type: "object"
+    required:
+    - "listId"
+    - "itemId"
+    properties:
+      listId:
+        type: "integer"
+        format: "int64"
+      itemId:
+        type: "integer"
+        format: "int64"
+      listitemId:
+        type: "integer"
+        format: "int64"
+  Item:
+    type: "object"
+    required:
+    - "name"
+    - "index"
+    - "status"
     properties:
       id:
         type: "integer"
@@ -417,8 +697,35 @@ definitions:
       index:
         type: "integer"
         format: "int32"
-      itemStatus:
+      status:
         type: "boolean"
+      assignedUserId:
+        type: "integer"
+        format: "int64"
+      completionDate:
+        type: "string"
+        format: "date-time"
+  Invite:
+    type: "object"
+    required:
+    - "senderId"
+    - "receiverId"
+    - "listId"
+    properties:
+      senderId:
+        type: "integer"
+        format: "int64"
+      receiverId:
+        type: "integer"
+        format: "int64"
+      listId:
+        type: "integer"
+        format: "int64"
+      inviteId:
+        type: "integer"
+        format: "int64"
+      message:
+        type: "string"
   ApiResponse:
     type: "object"
     properties:

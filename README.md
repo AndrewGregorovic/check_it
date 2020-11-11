@@ -128,10 +128,13 @@ Again similar to the edit personal list page, only difference is the additional 
 
 ## Database Schema
 
-The schema for the database used in this app is shown below.
-- It is optional for a user to create any checklists but each checklist must have one user who created it.
-- Each checklist must have at least 1 item in it.
+The schema for the database used in this app is shown below,
+- It is optional for a user to create any checklists but each checklist must have at least 1 user who created it.
+- Invites to group lists must have 1 user who created/sent the invite, 1 user who receives the invite and 1 list that the invite is for.
+- It is optional for a checklist to have any items. Even though a checklist without items isn't useful, this is because new lists are created without items and also because there may be cases where a user may recreate/repurpose a list by removing all the current items and adding new ones.
 - Each item is only used in 1 list. A single item cannot be used multiple times whether in the same list or multiple lists, this is because the checked state of each item needs to be tracked independently.
+- The repeats table is used instead of hardcoded values so that there is room to expand and possible add more intervals such as monthly or yearly.
+- The timezones table is used to avoid any issues with trying to get users to input their timezones correctly as text and again for room to expand and include less common time zones (only plan to include whole hour timezones at first).
 
 ![Database Schema](docs/database/database_schema.png)
 

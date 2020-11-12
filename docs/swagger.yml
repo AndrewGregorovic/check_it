@@ -11,10 +11,6 @@ tags:
   description: "Managing checklist items"
 - name: "invites"
   description: "Managing invites to group lists"
-- name: "userslists"
-  description: "Manages user-list links"
-- name: "listsitems"
-  description: "Manages list-item links"
 paths:
   /user:
     post:
@@ -198,7 +194,7 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "userId"
+      - name: "body"
         in: "body"
         description: "The user id that lists are being fetched for"
         required: true
@@ -451,6 +447,35 @@ paths:
         "404":
           description: "Item not found"
   /invites:
+    get:
+      tags:
+      - "invites"
+      summary: "Find invites sent to user id"
+      operationId: "getInvitesByUserId"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "body"
+        in: "body"
+        description: "The user id that invites are being fetched for"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            userId:
+              type: "integer"
+              format: "int64"
+      responses:
+        "200":
+          description: "Successfully fetched the user's invites"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Invite"
+        "400":
+          description: "Invalid user id"
+        "404":
+          description: "No invites found for the user"
     post:
       tags:
       - "invites"
@@ -485,119 +510,36 @@ paths:
           description: "Successfully created the invite"
         "400":
           description: "Invalid input"
-  /invites/{inviteId}:
-    get:
-      tags:
-      - "invites"
-      summary: "Get invite by id"
-      operationId: "getInviteById"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "inviteId"
-        in: "path"
-        description: "Id of invite to fetch"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        "200":
-          description: "Successfully fetched the invite"
-          schema:
-            $ref: "#/definitions/Invite"
-        "400":
-          description: "Invalid id"
-        "404":
-          description: "invite not found"
     delete:
       tags:
       - "invites"
-      summary: "Deletes an invite"
+      summary: "Deletes an invite after accept/decline"
       operationId: "deleteInvite"
       produces:
       - "application/json"
       parameters:
-      - name: "inviteId"
-        in: "path"
-        description: "The invite id of the invite to delete"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        "200":
-          description: "Successfully deletd the invite"
-        "400":
-          description: "Invalid id"
-        "404":
-          description: "Invite not found"
-  /userslists:
-    post:
-      tags:
-      - "userslists"
-      summary: "Adds a new user-list link to the database"
-      description: "Sends details required to create a new user-list link"
-      operationId: "addUserList"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "User-list object that needs to be added to the database"
+      - name: "body"
+        in: "body"
+        description: "The user id, list id and the user's response for the invite"
         required: true
         schema:
-          $ref: "#/definitions/UserList"
+          type: "object"
+          properties:
+            userId:
+              type: "integer"
+              format: "int64"
+            listId:
+              type: "integer"
+              format: "int64"
+            isAccepted:
+              type: "boolean"
       responses:
         "200":
-          description: "Successfully added a new user-list link"
+          description: "Successfully deleted the invite"
         "400":
           description: "Invalid input"
-  /listsitems:
-    post:
-      tags:
-      - "listsitems"
-      summary: "Adds a new list-item link to the database"
-      description: "Sends details required to create a new list-item link"
-      operationId: "addListItem"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "List-item object that needs to be added to the database"
-        required: true
-        schema:
-          $ref: "#/definitions/ListItem"
-      responses:
-        "200":
-          description: "Successfully added a new list-item link"
-        "400":
-          description: "Invalid input"
-  /listsitems/{listitemId}:
-    delete:
-      tags:
-      - "listsitems"
-      summary: "Deletes a list-item link"
-      operationId: "deleteListItem"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "listitemId"
-        in: "path"
-        description: "The list-item id of the list-item link to delete"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        "200":
-          description: "Successfully deletd the list-item link"
-        "400":
-          description: "Invalid id"
         "404":
-          description: "List-item link not found"
+          description: "No invite found"
 definitions:
   User:
     type: "object"
@@ -627,21 +569,6 @@ definitions:
       reminderTime:
         type: "integer"
         format: "int32"
-  UserList:
-    type: "object"
-    required:
-    - "userId"
-    - "listId"
-    properties:
-      userId:
-        type: "integer"
-        format: "int64"
-      listId:
-        type: "integer"
-        format: "int64"
-      userlistId:
-        type: "integer"
-        format: "int64"
   List:
     type: "object"
     required:
@@ -667,21 +594,6 @@ definitions:
         type: "string"
       thumbnailUrl:
         type: "string"
-  ListItem:
-    type: "object"
-    required:
-    - "listId"
-    - "itemId"
-    properties:
-      listId:
-        type: "integer"
-        format: "int64"
-      itemId:
-        type: "integer"
-        format: "int64"
-      listitemId:
-        type: "integer"
-        format: "int64"
   Item:
     type: "object"
     required:
@@ -708,20 +620,13 @@ definitions:
   Invite:
     type: "object"
     required:
-    - "senderId"
     - "receiverId"
     - "listId"
     properties:
-      senderId:
-        type: "integer"
-        format: "int64"
       receiverId:
         type: "integer"
         format: "int64"
       listId:
-        type: "integer"
-        format: "int64"
-      inviteId:
         type: "integer"
         format: "int64"
       message:

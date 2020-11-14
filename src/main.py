@@ -7,7 +7,7 @@ from src.database import init_db
 
 load_dotenv()
 app = Flask(__name__)
-app.config.from_object("src.default_settings")
+app.config.from_object("src.default_settings.app_config")
 db = init_db(app)
 ma = Marshmallow(app)
 

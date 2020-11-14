@@ -15,6 +15,3 @@ from src.controllers import registerable_controllers
 
 for controller in registerable_controllers:
     app.register_blueprint(controller)
-
-def add(a, b):
-    return (a + b)

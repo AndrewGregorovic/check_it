@@ -2,22 +2,11 @@ import os
 
 from dotenv import load_dotenv
 from flask import abort, Flask, jsonify, request
-import psycopg2
 
+from src.database import connection, cursor
 
 load_dotenv()
 app = Flask(__name__)
-
-connection = psycopg2.connect(
-    database="check_it_api",
-    user="check_it_app",
-    password=os.getenv("DB_PASSWORD"),
-    host="localhost"
-)
-cursor = connection.cursor()
-
-cursor.execute("CREATE TABLE IF NOT EXISTS items (id SERIAL PRIMARY KEY, name VARCHAR);")
-connection.commit()
 
 @app.route("/items", methods=["POST"])
 def item_create():

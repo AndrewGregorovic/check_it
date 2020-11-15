@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from flask import abort, Flask, jsonify, request
 from flask_marshmallow import Marshmallow
+from marshmallow.exceptions import ValidationError
 
 from src.database import init_db
 
@@ -17,3 +18,7 @@ from src.controllers import registerable_controllers
 app.register_blueprint(db_commands)
 for controller in registerable_controllers:
     app.register_blueprint(controller)
+
+@app.errorhandler(ValidationError)
+def handle_bad_request(error):
+    return (jsonify(error.messages), 400)

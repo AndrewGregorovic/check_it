@@ -11,7 +11,9 @@ app.config.from_object("src.default_settings.app_config")
 db = init_db(app)
 ma = Marshmallow(app)
 
+from src.commands import db_commands
 from src.controllers import registerable_controllers
 
+app.register_blueprint(db_commands)
 for controller in registerable_controllers:
     app.register_blueprint(controller)

@@ -21,6 +21,7 @@ class ProductionConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
 
 environment = os.environ.get("FLASK_ENV")
 

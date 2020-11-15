@@ -1,4 +1,3 @@
-import random
 import unittest
 
 from src.main import create_app, db
@@ -37,16 +36,14 @@ class TestItems(unittest.TestCase):
         self.assertIsNotNone(item)
         
     def test_item_show(self):
-        app = create_app()
-        client = app.test_client()
-        response = client.get(f"/items/{random.randrange(9)}")
+        response = self.client.get(f"/items/4")
         data = response.get_json()
 
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(data, dict)
 
     def test_item_update(self):
-        response = self.client.patch(f"/items/{random.randrange(9)}", json={
+        response = self.client.patch(f"/items/7", json={
             "name": "changed name"
         })
         data = response.get_json()
@@ -56,7 +53,7 @@ class TestItems(unittest.TestCase):
         self.assertEqual(data["name"], "changed name")
 
     def test_item_delete(self):
-        response = self.client.delete(f"/items/{random.randrange(9)}")
+        response = self.client.delete(f"/items/2")
         data = response.get_json()
 
         self.assertEqual(response.status_code, 200)

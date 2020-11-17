@@ -20,5 +20,6 @@ jobs:
       - name: Run Tests
         env:
           FLASK_ENV: testing
+          SQLALCHEMY_DATABASE_URI: "sqlite:///:memory:"
         run: |
           python -m unittest discover src/tests

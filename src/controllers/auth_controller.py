@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from flask import abort, Blueprint, jsonify, request
+from flask_jwt_extended import create_access_token
 
 from src.main import bcrypt, db
 from src.models.User import User
@@ -23,3 +26,16 @@ def auth_register():
     db.session.commit()
 
     return jsonify(user_schema.dump(user))
+
+@auth.route("/login", methods=["POST"])
+def auth_login():
+    user_fields = user_schema.load(request.json)
+    user = User.query.filter_by(email=user_fields["email"]).first()
+
+    if not user or not bcrypt.check_password_hash(user.password, user_fields["password"]):
+        return abort(401, description="Incorrect username and password")
+
+    expiry = timedelta(days=1)
+    access_token = create_access_token(identity=str(user.id), expires_delta=expiry)
+
+    return jsonify({"token": access_token})

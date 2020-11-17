@@ -6,6 +6,11 @@ from src.schemas.ItemSchema import item_schema, items_schema
 
 items = Blueprint("items", __name__, url_prefix="/items")
 
+@items.route("/", methods=["GET"])
+def get_list_items():
+    ### Gets all the items for a specific list
+    pass
+
 @items.route("/", methods=["POST"])
 def item_create():
     item_fields = item_schema.load(request.json)

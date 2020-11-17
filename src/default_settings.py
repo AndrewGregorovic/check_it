@@ -34,6 +34,7 @@ class TestingConfig(Config):
 
 class WorkflowConfig(Config):
     TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
 
 environment = os.environ.get("FLASK_ENV")
 

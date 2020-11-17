@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from flask import Flask, jsonify
+from flask_bcrypt import Bcrypt
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from marshmallow.exceptions import ValidationError
@@ -9,6 +10,7 @@ from marshmallow.exceptions import ValidationError
 load_dotenv()
 db = SQLAlchemy()
 ma = Marshmallow()
+bcrypt = Bcrypt()
 
 def create_app():
     # These need to be inside the function
@@ -22,6 +24,7 @@ def create_app():
     # Bind extensions to the app
     db.init_app(app)
     ma.init_app(app)
+    bcrypt.init_app(app)
 
     # Register blueprints
     app.register_blueprint(db_commands)

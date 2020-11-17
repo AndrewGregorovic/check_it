@@ -32,11 +32,16 @@ class TestingConfig(Config):
     def SQLALCHEMY_DATABASE_URI(self):
         return get_env_var("DB_TEST_URI")
 
+class WorkflowConfig(Config):
+    TESTING = True
+
 environment = os.environ.get("FLASK_ENV")
 
 if environment == "production":
     app_config = ProductionConfig()
 elif environment == "testing":
     app_config = TestingConfig()
+elif environment == "workflow":
+    app_config = WorkflowConfig()
 else:
     app_config = DevelopmentConfig()

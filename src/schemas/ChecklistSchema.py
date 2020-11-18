@@ -1,12 +1,12 @@
 from marshmallow.validate import Length
 
 from src.main import ma
-from src.models.List import List
+from src.models.Checklist import Checklist
 
 
-class ListSchema(ma.SQLAlchemyAutoSchema):
+class ChecklistSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = List
+        model = Checklist
 
     title = ma.String(required=True, validate=Length(min=1))
     is_group = ma.Boolean(required=True)
@@ -14,5 +14,5 @@ class ListSchema(ma.SQLAlchemyAutoSchema):
     thumbnail_image = ma.String()
     # repeat_id = ma.Integer()
 
-list_schema = ListSchema()
-lists_schema = ListSchema(many=True)
+checklist_schema = ChecklistSchema()
+checklists_schema = ChecklistSchema(many=True)

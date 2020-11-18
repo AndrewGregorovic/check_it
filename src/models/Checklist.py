@@ -1,8 +1,8 @@
 from src.main import db
 
 
-class List(db.Model):
-    __tablename__ = "lists"
+class Checklist(db.Model):
+    __tablename__ = "checklists"
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(), nullable=False)

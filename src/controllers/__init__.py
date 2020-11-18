@@ -1,10 +1,10 @@
 from src.controllers.auth_controller import auth
-from src.controllers.lists_controller import lists
+from src.controllers.checklists_controller import checklists
 from src.controllers.items_controller import items
 
 
 registerable_controllers = [
     auth,
-    lists,
+    checklists,
     items
 ]

@@ -9,6 +9,7 @@ class Checklist(db.Model):
     is_group = db.Column(db.Boolean, nullable=False)
     description = db.Column(db.String())
     thumbnail_image = db.Column(db.String())
-    # owner_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     # repeat_id = db.Column(db.Integer, nullable=False, default=0)
     # item_list = db.relationship("Item", backref="list")
+    # users = db.relationship("UsersChecklists", backref="checklists")

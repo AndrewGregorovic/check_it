@@ -13,6 +13,7 @@ class ChecklistSchema(ma.SQLAlchemyAutoSchema):
     description = ma.String()
     thumbnail_image = ma.String()
     # repeat_id = ma.Integer()
+    owner_id = ma.Integer()
 
 checklist_schema = ChecklistSchema()
 checklists_schema = ChecklistSchema(many=True)

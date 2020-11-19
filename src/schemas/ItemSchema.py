@@ -10,9 +10,10 @@ class ItemSchema(ma.SQLAlchemyAutoSchema):
 
     name = ma.String(required=True, validate=Length(min=1))
     status = ma.Boolean()
-    index = ma.Integer()
+    index = ma.Integer(required=True)
     completion_date = ma.DateTime()
     assigned_id = ma.Integer()
+    checklist_id = ma.Integer()
 
 item_schema = ItemSchema()
 items_schema = ItemSchema(many=True)

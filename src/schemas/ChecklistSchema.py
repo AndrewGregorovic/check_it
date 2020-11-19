@@ -14,8 +14,8 @@ class ChecklistSchema(ma.SQLAlchemyAutoSchema):
     thumbnail_image = ma.String()
     # repeat_id = ma.Integer()
     owner_id = ma.Integer()
-    users = ma.Nested("UserSchema", many=True, only=("id", "email",))
-    items = ma.Nested("ItemSchema", many=True)
+    users = ma.Nested("UserSchema", many=True, only=("id", "email"))
+    items = ma.Nested("ItemSchema", many=True, exclude=("checklist_id",))
 
 checklist_schema = ChecklistSchema()
 checklists_schema = ChecklistSchema(many=True)

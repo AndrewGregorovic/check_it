@@ -1,4 +1,5 @@
 from src.main import db
+from src.models.UsersChecklists import users_checklists
 
 
 class Checklist(db.Model):
@@ -11,5 +12,5 @@ class Checklist(db.Model):
     thumbnail_image = db.Column(db.String())
     owner_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     # repeat_id = db.Column(db.Integer, nullable=False, default=0)
-    # item_list = db.relationship("Item", backref="list")
-    # users = db.relationship("UsersChecklists", backref="checklists")
+    users = db.relationship("User", secondary=users_checklists, back_populates="checklists")
+    items = db.relationship("Item", backref="checklist", cascade="all, delete-orphan")

@@ -12,7 +12,7 @@ class ItemSchema(ma.SQLAlchemyAutoSchema):
     status = ma.Boolean()
     index = ma.Integer()
     completion_date = ma.DateTime()
-    # assigned_id = ma.Integer()
+    assigned_id = ma.Integer()
 
 item_schema = ItemSchema()
 items_schema = ItemSchema(many=True)

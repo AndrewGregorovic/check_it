@@ -1,3 +1,4 @@
+from datetime import datetime
 import random
 
 from faker import Faker
@@ -26,28 +27,59 @@ def seed_db():
     faker = Faker()
     
     users=[]
-    for i in range(5):
+    for i in range(10):
         user = User()
-        user.email = f"test{i}@test.com"
+        user.email = f"test{i + 1}@test.com"
         user.password = bcrypt.generate_password_hash("123456").decode("utf-8")
         db.session.add(user)
         users.append(user)
 
     db.session.commit()
 
+    checklists=[]
     for i in range(10):
+        # Pick random user to create a checklist for
+        user = random.choice(users)
         checklist = Checklist()
         checklist.title = faker.catch_phrase()
         checklist.is_group = random.choice([True, False])
-        checklist.owner_id = random.choice(users).id
-        db.session.add(checklist)
+        checklist.owner_id = user.id
+        user.owned_checklists.append(checklist)
+        user.checklists.append(checklist)
+        # If group list, pick random users who aren't the owner to add to association table
+        if checklist.is_group:
+            num_members = random.randint(2, 5)
+            for i in range(num_members):
+                member = random.choice(users)
+                if member != user:
+                    member.checklists.append(checklist)
+
+        checklists.append(checklist)
 
     db.session.commit()
 
-    for i in range(20):
+    for i in range(30):
+        # Pick a random checklist to create an item for
+        checklist = random.choice(checklists)
         item = Item()
         item.name = faker.catch_phrase()
-        db.session.add(item)
+        # Randomly assign status, if True add current datetime for completion
+        item.status = random.choice([True, False])
+        if item.status:
+            item.completion_date = datetime.now()
+        item.checklist_id = checklist.id
+        # If group list, get members and append None
+        # Randomly pick a member to assign to the item, None indicates item is unassigned
+        if checklist.is_group:
+            users = checklist.users.copy()
+            users.append(None)
+            user = random.choice(users)
+            if user:
+                item.assigned_id = user.id
+                user.items.append(item)
+            else:
+                item.assigned_id = None
+        checklist.items.append(item)
     
     db.session.commit()
     print("TABLES SEEDED")

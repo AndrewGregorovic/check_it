@@ -1,10 +1,14 @@
-from flask import abort, Blueprint, jsonify, request
+from pathlib import Path
+
+import boto3
+from flask import abort, Blueprint, current_app, jsonify, Response, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from src.main import db
 from src.models.Checklist import Checklist
 from src.models.User import User
 from src.schemas.ChecklistSchema import checklist_schema
+from src.services.auth_service import verify_user
 
 
 checklists = Blueprint("checklists", __name__, url_prefix="/checklists")
@@ -84,3 +88,58 @@ def checklist_delete(id):
     db.session.commit()
 
     return jsonify("the following checklist was deleted", checklist_schema.dump(checklist))
+
+
+@checklists.route("/<int:id>/image", methods=["POST"])
+@jwt_required
+@verify_user
+def thumbnail_image_create(user, id):
+    """
+    Uploads an image to S3 bucket and adds the filename to the thumbnail image column for the checklist
+
+    Parameters:
+    user: User
+        The user object for the user trying to make the request
+    id: integer
+        The checklist id number for the checklist to update with a new image
+
+    Returns:
+    Tuple containing message of the request outcome and the response status code
+    """
+
+    checklist = Checklist.query.get(id)
+
+    # Only the owner of a checklist can add a thumbnail image to it
+    if user.id != checklist.owner_id:
+        return abort(401, description="You do not have permission to add an image to this checklist.")
+
+    if "image" not in request.files:
+        return abort(400, description="No image provided.")
+
+    image = request.files["image"]
+
+    # deepcode ignore PT: <please specify a reason of ignoring this>
+    if Path(image.filename).suffix not in (".png", ".jpeg", ".jpg", ".gif"):
+        return abort(400, description="Invalid file type.")
+
+    filename = f"{checklist.id}.png"
+    bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])
+    key = f"checklist_thumbnails/{filename}"
+    bucket.upload_fileobj(image, key)
+
+    checklist.thumbnail_image = filename
+    db.session.commit()
+
+    return (f"Thumbnail image set for checklist: {checklist.title}", 200)
+
+
+@checklists.route("/<int:id>/image", methods=["GET"])
+def thumbnail_image_show(user, id):
+    pass
+
+
+@checklists.route("/<int:id>/image", methods=["DELETE"])
+@jwt_required
+@verify_user
+def thumbnail_image_delete(user, id):
+    pass

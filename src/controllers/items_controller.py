@@ -25,7 +25,7 @@ def item_create(user):
         The user object for the user trying to make the request
 
     Returns:
-    Dict of the new item added to the table
+    Tuple containing the dict of the new item or message of the request outcome and the response status code
     """
 
     item_fields = item_schema.load(request.json)
@@ -79,7 +79,7 @@ def item_update(user, id):
         The item id number for the item to update
 
     Returns:
-    Dict of the updated item
+    Dict of the updated item or a tuple of the response status code and message of the request outcome
     """
 
     item_fields = item_schema.load(request.json)
@@ -126,7 +126,7 @@ def item_delete(user, id):
         The item id number for the item to update
 
     Returns:
-    List containing a deletion message and the dict of the removed item
+    Tuple containing a message of the response outcome and the dict of the removed item or status code
     """
 
     item = Item.query.get(id)

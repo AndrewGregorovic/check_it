@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import boto3
-from flask import abort, Blueprint, current_app, jsonify, request
+from flask import abort, Blueprint, current_app, jsonify, Response, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from src.main import db
@@ -118,7 +118,6 @@ def thumbnail_image_create(user, id):
 
     image = request.files["image"]
 
-    # deepcode ignore PT: <please specify a reason of ignoring this>
     if Path(image.filename).suffix not in (".png", ".jpeg", ".jpg", ".gif"):
         return abort(400, description="Invalid file type.")
 
@@ -135,11 +134,64 @@ def thumbnail_image_create(user, id):
 
 @checklists.route("/<int:id>/image", methods=["GET"])
 def thumbnail_image_show(user, id):
-    pass
+    """
+    Retrieves the thumbnail image for the checklist id provided
+
+    Parameters:
+    user: User
+        The user object for the user trying to make the request
+    id: integer
+        The checklist id number that we are retrieving the thumbnail image for
+
+    Returns:
+    Response object containing the image and specifies the mimetype
+    """
+
+    checklist = Checklist.query.get(id)
+
+    if not checklist.thumbnail_image:
+        return abort(404, description="This checklist has no thumbnail image.")
+
+    bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])
+    filename = checklist.thumbnail_image
+    file_obj = bucket.Object(f"checklist_thumbnails/{filename}").get()
+
+    return Response(file_obj["Body"].read(), mimetype="image/*",
+                    headers={"Content-Disposition": "attachment;filename=image"})
 
 
 @checklists.route("/<int:id>/image", methods=["DELETE"])
 @jwt_required
 @verify_user
 def thumbnail_image_delete(user, id):
-    pass
+    """
+    Deletes the thumbnail image from the S3 bucket and the checklist table data
+    for the checklist id provided
+
+    Parameters:
+    user: User
+        The user object for the user trying to make the request
+    id: integer
+        The checklist id number that we are deleting the thumbnail image for
+
+    Returns:
+    String containing the request outcome, this is in a tuple with the status code in the case of aborts
+    """
+
+    checklist = Checklist.query.get(id)
+
+    # Only the owner of a checklist can delete a thumbnail image from it
+    if user.id != checklist.owner_id:
+        return abort(401, description="You do not have permission to delete this checklist's thumbnail image.")
+    
+    if not checklist.thumbnail_image:
+        return abort(404, description="This checklist has no thumbnail image.")
+
+    bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])
+    filename = checklist.thumbnail_image
+    bucket.Object(f"checklist_thumbnails/{filename}").delete()
+
+    checklist.thumbnail_image = None
+    db.session.commit()
+
+    return jsonify(f"Successfully removed the thumbnail image for {checklist.title}.")

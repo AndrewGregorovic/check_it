@@ -12,7 +12,7 @@ class ChecklistSchema(ma.SQLAlchemyAutoSchema):
     is_group = ma.Boolean(required=True)
     description = ma.String()
     thumbnail_image = ma.String()
-    # repeat_id = ma.Integer()
+    repeat_id = ma.Integer()
     owner_id = ma.Integer()
     users = ma.Nested("UserSchema", many=True, only=("id", "email"))
     items = ma.Nested("ItemSchema", many=True, exclude=("checklist_id",))

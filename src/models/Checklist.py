@@ -11,6 +11,6 @@ class Checklist(db.Model):
     description = db.Column(db.String())
     thumbnail_image = db.Column(db.String())
     owner_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    # repeat_id = db.Column(db.Integer, nullable=False, default=0)
+    repeat_id = db.Column(db.Integer, nullable=False, default=0)
     users = db.relationship("User", secondary=users_checklists, back_populates="checklists")
     items = db.relationship("Item", backref="checklist", cascade="all, delete-orphan")

@@ -10,23 +10,35 @@ from src.models.Item import Item
 from src.models.User import User
 
 
-db_commands = Blueprint("db", __name__)
+db_commands = Blueprint("db-custom", __name__)
 
 
 @db_commands.cli.command("create")
 def create_db():
+    """
+    Custom flask db command to create all tables from models
+    """
+
     db.create_all()
     print("TABLES CREATED")
 
 
 @db_commands.cli.command("drop")
 def drop_db():
+    """
+    Custom flask db command to drop all tables from the database
+    """
+
     db.drop_all()
     print("TABLES DROPPED")
 
 
 @db_commands.cli.command("seed")
 def seed_db():
+    """
+    Custom flask db command to seed tables with fake data for testing
+    """
+
     faker = Faker()
 
     users = []
@@ -49,6 +61,7 @@ def seed_db():
         checklist.owner_id = user.id
         user.owned_checklists.append(checklist)
         user.checklists.append(checklist)
+
         # If group list, pick random users who aren't the owner to add to association table
         if checklist.is_group:
             num_members = random.randint(2, 5)
@@ -66,11 +79,13 @@ def seed_db():
         checklist = random.choice(checklists)
         item = Item()
         item.name = faker.catch_phrase()
+
         # Randomly assign status, if True add current datetime for completion
         item.status = random.choice([True, False])
         if item.status:
             item.completion_date = datetime.now()
         item.checklist_id = checklist.id
+
         # If group list, get members and append None
         # Randomly pick a member to assign to the item, None indicates item is unassigned
         if checklist.is_group:

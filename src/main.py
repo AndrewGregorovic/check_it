@@ -16,6 +16,13 @@ jwt = JWTManager()
 
 
 def create_app():
+    """
+    Factory pattern used to create instances of a Flask app
+
+    Returns:
+    An instance of the Flask app
+    """
+
     # These need to be inside the function
     from src.commands import db_commands
     from src.controllers import registerable_controllers

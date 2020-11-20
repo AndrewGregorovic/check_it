@@ -11,6 +11,9 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 
     email = ma.String(required=True, validate=Length(min=4))
     password = ma.String(required=True, validate=Length(min=6))
+    checklists = ma.Nested(many=True, only=("id", "title"))
+    owned_checklists = ma.Nested(many=True, only=("id", "title"))
+    items = ma.Nested(many=True, only=("id", "name", "checklist_id"))
 
 
 user_schema = UserSchema()

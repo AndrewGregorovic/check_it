@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import boto3
-from flask import abort, Blueprint, current_app, jsonify, Response, request
+from flask import abort, Blueprint, current_app, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from src.main import db

@@ -12,21 +12,24 @@ from src.models.User import User
 
 db_commands = Blueprint("db", __name__)
 
+
 @db_commands.cli.command("create")
 def create_db():
     db.create_all()
     print("TABLES CREATED")
+
 
 @db_commands.cli.command("drop")
 def drop_db():
     db.drop_all()
     print("TABLES DROPPED")
 
+
 @db_commands.cli.command("seed")
 def seed_db():
     faker = Faker()
-    
-    users=[]
+
+    users = []
     for i in range(10):
         user = User()
         user.email = f"test{i + 1}@test.com"
@@ -36,7 +39,7 @@ def seed_db():
 
     db.session.commit()
 
-    checklists=[]
+    checklists = []
     for i in range(10):
         # Pick random user to create a checklist for
         user = random.choice(users)
@@ -80,6 +83,6 @@ def seed_db():
             else:
                 item.assigned_id = None
         checklist.items.append(item)
-    
+
     db.session.commit()
     print("TABLES SEEDED")

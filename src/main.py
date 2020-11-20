@@ -14,6 +14,7 @@ ma = Marshmallow()
 bcrypt = Bcrypt()
 jwt = JWTManager()
 
+
 def create_app():
     # These need to be inside the function
     from src.commands import db_commands
@@ -22,7 +23,7 @@ def create_app():
     # Create the app and load default config settings
     app = Flask(__name__)
     app.config.from_object("src.default_settings.app_config")
-    
+
     # Bind extensions to the app
     db.init_app(app)
     ma.init_app(app)

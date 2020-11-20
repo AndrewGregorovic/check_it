@@ -15,5 +15,6 @@ class ItemSchema(ma.SQLAlchemyAutoSchema):
     assigned_id = ma.Integer()
     checklist_id = ma.Integer()
 
+
 item_schema = ItemSchema()
 items_schema = ItemSchema(many=True)

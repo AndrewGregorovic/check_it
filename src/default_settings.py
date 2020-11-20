@@ -9,6 +9,7 @@ def get_env_var(env_var):
 
     return value
 
+
 class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = "check"
@@ -17,13 +18,16 @@ class Config(object):
     def SQLALCHEMY_DATABASE_URI(self):
         return get_env_var("DB_URI")
 
+
 class DevelopmentConfig(Config):
     DEBUG = True
+
 
 class ProductionConfig(Config):
     @property
     def JWT_SECRET_KEY(self):
         return get_env_var("JWT_SECRET_KEY")
+
 
 class TestingConfig(Config):
     TESTING = True
@@ -32,9 +36,11 @@ class TestingConfig(Config):
     def SQLALCHEMY_DATABASE_URI(self):
         return get_env_var("DB_TEST_URI")
 
+
 class WorkflowConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+
 
 environment = os.environ.get("FLASK_ENV")
 

@@ -10,6 +10,7 @@ from src.schemas.UserSchema import user_schema
 
 auth = Blueprint("auth", __name__, url_prefix="/auth")
 
+
 @auth.route("/register", methods=["POST"])
 def auth_register():
     user_fields = user_schema.load(request.json)
@@ -26,6 +27,7 @@ def auth_register():
     db.session.commit()
 
     return jsonify(user_schema.dump(user))
+
 
 @auth.route("/login", methods=["POST"])
 def auth_login():

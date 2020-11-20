@@ -30,6 +30,7 @@ def drop_db():
     """
 
     db.drop_all()
+    db.engine.execute("DROP TABLE IF EXISTS alembic_version;")
     print("TABLES DROPPED")
 
 

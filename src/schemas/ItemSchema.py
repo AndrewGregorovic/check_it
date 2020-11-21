@@ -7,13 +7,15 @@ from src.models.Item import Item
 class ItemSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Item
+        ordered = True
+        dump_only = ["completion_date"]
 
     name = ma.String(required=True, validate=Length(min=1))
     status = ma.Boolean()
-    index = ma.Integer(required=True)
-    completion_date = ma.DateTime()
-    assigned_id = ma.Integer()
+    index = ma.Integer()
     checklist_id = ma.Integer()
+    assigned_id = ma.Integer()
+    completion_date = ma.DateTime()
 
 
 item_schema = ItemSchema()

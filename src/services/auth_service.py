@@ -8,11 +8,14 @@ from src.models.User import User
 
 def verify_user(function):
     """
-    Wrapper function to verify the user interacting with the API
+    Wrapper function to verify the user interacting with the API,
+    they must be both a registered user and be making the request with their own user id
 
     Parameters:
     function: function
         The api route function being passed into the wrapper
+    kwargs: dict
+        The dict will contain keys for each id passed from the url route
 
     Returns:
     The wrapped function with the user that has veen verified as an argument of that function.
@@ -21,10 +24,11 @@ def verify_user(function):
 
     @wraps(function)
     def wrapper(*args, **kwargs):
-        user_id = get_jwt_identity()
-        user = User.query.get(user_id)
 
-        if not user:
+        identity = get_jwt_identity()
+        user = User.query.get(identity)
+
+        if not user or int(identity) != kwargs["user_id"]:
             return abort(401, description="Invalid user.")
 
         return function(user, *args, **kwargs)

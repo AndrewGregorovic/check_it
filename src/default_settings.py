@@ -13,7 +13,7 @@ def get_env_var(env_var):
 class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = "check"
-    
+
     # 1MB for file size uploads
     MAX_CONTENT_LENGTH = 1 * 1024 * 1024
 
@@ -23,7 +23,7 @@ class Config(object):
 
     @property
     def AWS_ACCESS_KEY_ID(self):
-        return get_env_var("AWS_ACCESS_KEY")
+        return get_env_var("AWS_ACCESS_KEY_ID")
 
     @property
     def AWS_SECRET_ACCESS_KEY(self):

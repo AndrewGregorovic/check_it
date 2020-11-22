@@ -7,62 +7,80 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from src.main import db
 from src.models.Checklist import Checklist
 from src.models.User import User
-from src.schemas.ChecklistSchema import checklist_schema
+from src.schemas.ChecklistSchema import checklist_schema, checklists_schema
 from src.services.auth_service import verify_user
 
 
-checklists = Blueprint("checklists", __name__, url_prefix="/checklists")
+checklists = Blueprint("checklists", __name__, url_prefix="/users/<int:user_id>/checklists")
 
 
 @checklists.route("/", methods=["GET"])
-def get_user_checklists():
-    # Get all checklists for a specific user
-    pass
+@jwt_required
+@verify_user
+def get_user_checklists(user, user_id):
+    """
+    Get all checklists for the current user
+    
+    Parameters:
+    user: User
+        The user object for the user trying to make the request
+    user_id: integer
+        The user id number for the checklists to retrieve
 
+    Returns:
+    List containing dicts of the retrieved checklists for the user
+    """
+
+    checklists = [Checklist.query.get(checklist.id) for checklist in user.checklists]
+
+    return jsonify(checklists_schema.dump(checklists))
 
 @checklists.route("/", methods=["POST"])
 @jwt_required
-def checklist_create():
+@verify_user
+def checklist_create(user, user_id):
     checklist_fields = checklist_schema.load(request.json)
-
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-
-    if not user:
-        return abort(401, description="invalid user")
 
     new_checklist = Checklist()
     new_checklist.title = checklist_fields["title"]
     new_checklist.is_group = checklist_fields["is_group"]
-    new_checklist.owner_id = user_id
+    new_checklist.owner_id = user.id
 
-    db.session.add(new_checklist)
+    user.checklists.append(new_checklist)
     db.session.commit()
 
     return jsonify(checklist_schema.dump(new_checklist))
 
 
-@checklists.route("/<int:id>", methods=["GET"])
-def checklist_get(id):
-    checklist = Checklist.query.get(id)
+@checklists.route("/<int:checklist_id>", methods=["GET"])
+@jwt_required
+@verify_user
+def checklist_get(user, user_id, checklist_id):
+
+    checklist = Checklist.query.get(checklist_id)
+
+    if not checklist:
+        return abort(404, description="Checklist not found.")
+
+    if user.id not in [member.id for member in checklist.users]:
+        return abort(401, description="You do not have permission to view this checklist.")
+
     return jsonify(checklist_schema.dump(checklist))
 
 
-@checklists.route("/<int:id>", methods=["PATCH", "PUT"])
+@checklists.route("/<int:checklist_id>", methods=["PATCH", "PUT"])
 @jwt_required
-def checklist_update(id):
+@verify_user
+def checklist_update(user, user_id, checklist_id):
     checklist_fields = checklist_schema.load(request.json)
 
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-
-    if not user:
-        return abort(401, description="invalid user")
-
-    checklists = Checklist.query.filter_by(id=id, owner_id=user.id)
+    checklists = Checklist.query.filter_by(id=checklist_id)
 
     if checklists.count() != 1:
-        return abort(401, description="unauthorized to update this checklist")
+        return abort(404, description="Checklist not found.")
+
+    if checklists[0].owner_id != user.id:
+        return abort(401, description="You do not have permission to update this checklist.")
 
     checklists.update(checklist_fields)
     db.session.commit()
@@ -70,19 +88,18 @@ def checklist_update(id):
     return jsonify(checklist_schema.dump(checklists[0]))
 
 
-@checklists.route("/<int:id>", methods=["DELETE"])
+@checklists.route("/<int:checklist_id>", methods=["DELETE"])
 @jwt_required
-def checklist_delete(id):
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-
-    if not user:
-        return abort(401, description="invalid user")
-
-    checklist = Checklist.query.filter_by(id=id, owner_id=user.id).first()
+@verify_user
+def checklist_delete(user, user_id, checklist_id):
+    
+    checklist = Checklist.query.get(checklist_id)
 
     if not checklist:
-        return abort(400, description="checklist not found")
+        return abort(404, description="Checklist not found.")
+
+    if checklist.owner_id != user.id:
+        return abort(401, description="You do not have permission to delete this checklist.")
 
     db.session.delete(checklist)
     db.session.commit()
@@ -90,26 +107,25 @@ def checklist_delete(id):
     return jsonify("the following checklist was deleted", checklist_schema.dump(checklist))
 
 
-@checklists.route("/<int:id>/image", methods=["POST"])
+@checklists.route("/<int:checklist_id>/image", methods=["POST"])
 @jwt_required
 @verify_user
-def thumbnail_image_create(user, id):
+def thumbnail_image_create(user, user_id, checklist_id):
     """
     Uploads an image to S3 bucket and adds the filename to the thumbnail image column for the checklist
 
     Parameters:
     user: User
         The user object for the user trying to make the request
-    id: integer
+    checklist_id: integer
         The checklist id number for the checklist to update with a new image
 
     Returns:
     Tuple containing message of the request outcome and the response status code
     """
 
-    checklist = Checklist.query.get(id)
+    checklist = Checklist.query.get(checklist_id)
 
-    # Only the owner of a checklist can add a thumbnail image to it
     if user.id != checklist.owner_id:
         return abort(401, description="You do not have permission to add an image to this checklist.")
 
@@ -129,28 +145,33 @@ def thumbnail_image_create(user, id):
     checklist.thumbnail_image = filename
     db.session.commit()
 
-    return (f"Thumbnail image set for checklist: {checklist.title}", 200)
+    return (f"Thumbnail image set for checklist: {checklist.title}", 201)
 
 
-@checklists.route("/<int:id>/image", methods=["GET"])
-def thumbnail_image_show(user, id):
+@checklists.route("/<int:checklist_id>/image", methods=["GET"])
+@jwt_required
+@verify_user
+def thumbnail_image_show(user, user_id, checklist_id):
     """
     Retrieves the thumbnail image for the checklist id provided
 
     Parameters:
     user: User
         The user object for the user trying to make the request
-    id: integer
+    checklist_id: integer
         The checklist id number that we are retrieving the thumbnail image for
 
     Returns:
     Response object containing the image and specifies the mimetype
     """
 
-    checklist = Checklist.query.get(id)
+    checklist = Checklist.query.get(checklist_id)
 
     if not checklist.thumbnail_image:
         return abort(404, description="This checklist has no thumbnail image.")
+
+    if user.id not in [member.id for member in checklist.users]:
+        return abort(401, description="You do not have permission to view this checklist.")
 
     bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])
     filename = checklist.thumbnail_image
@@ -160,10 +181,10 @@ def thumbnail_image_show(user, id):
                     headers={"Content-Disposition": "attachment;filename=image"})
 
 
-@checklists.route("/<int:id>/image", methods=["DELETE"])
+@checklists.route("/<int:checklist_id>/image", methods=["DELETE"])
 @jwt_required
 @verify_user
-def thumbnail_image_delete(user, id):
+def thumbnail_image_delete(user, user_id, checklist_id):
     """
     Deletes the thumbnail image from the S3 bucket and the checklist table data
     for the checklist id provided
@@ -171,19 +192,18 @@ def thumbnail_image_delete(user, id):
     Parameters:
     user: User
         The user object for the user trying to make the request
-    id: integer
+    checklist_id: integer
         The checklist id number that we are deleting the thumbnail image for
 
     Returns:
-    String containing the request outcome, this is in a tuple with the status code in the case of aborts
+    String containing the request outcome
     """
 
-    checklist = Checklist.query.get(id)
+    checklist = Checklist.query.get(checklist_id)
 
-    # Only the owner of a checklist can delete a thumbnail image from it
     if user.id != checklist.owner_id:
         return abort(401, description="You do not have permission to delete this checklist's thumbnail image.")
-    
+
     if not checklist.thumbnail_image:
         return abort(404, description="This checklist has no thumbnail image.")
 

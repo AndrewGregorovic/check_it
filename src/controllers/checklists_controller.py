@@ -2,11 +2,10 @@ from pathlib import Path
 
 import boto3
 from flask import abort, Blueprint, current_app, jsonify, Response, request
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import jwt_required
 
 from src.main import db
 from src.models.Checklist import Checklist
-from src.models.User import User
 from src.schemas.ChecklistSchema import checklist_schema, checklists_schema
 from src.services.auth_service import verify_user
 
@@ -20,7 +19,7 @@ checklists = Blueprint("checklists", __name__, url_prefix="/users/<int:user_id>/
 def get_user_checklists(user, user_id):
     """
     Get all checklists for the current user
-    
+
     Parameters:
     user: User
         The user object for the user trying to make the request
@@ -33,7 +32,11 @@ def get_user_checklists(user, user_id):
 
     checklists = [Checklist.query.get(checklist.id) for checklist in user.checklists]
 
+    if checklists.count() != 1:
+        return abort(404, description="The user does not have any checklists.")
+
     return jsonify(checklists_schema.dump(checklists))
+
 
 @checklists.route("/", methods=["POST"])
 @jwt_required
@@ -86,11 +89,11 @@ def checklist_get(user, user_id, checklist_id):
 
     checklist = Checklist.query.get(checklist_id)
 
-    if not checklist:
-        return abort(404, description="Checklist not found.")
-
     if user.id not in [member.id for member in checklist.users]:
         return abort(401, description="You do not have permission to view this checklist.")
+
+    if not checklist:
+        return abort(404, description="Checklist not found.")
 
     return jsonify(checklist_schema.dump(checklist))
 
@@ -118,11 +121,11 @@ def checklist_update(user, user_id, checklist_id):
 
     checklists = Checklist.query.filter_by(id=checklist_id)
 
-    if checklists.count() != 1:
-        return abort(404, description="Checklist not found.")
-
     if checklists[0].owner_id != user.id:
         return abort(401, description="You do not have permission to update this checklist.")
+
+    if checklists.count() != 1:
+        return abort(404, description="Checklist not found.")
 
     checklists.update(checklist_fields)
     db.session.commit()
@@ -152,11 +155,11 @@ def checklist_delete(user, user_id, checklist_id):
 
     checklist = Checklist.query.get(checklist_id)
 
-    if not checklist:
-        return abort(404, description="Checklist not found.")
-
     if checklist.owner_id != user.id:
         return abort(401, description="You do not have permission to delete this checklist.")
+
+    if not checklist:
+        return abort(404, description="Checklist not found.")
 
     db.session.delete(checklist)
     db.session.commit()
@@ -228,11 +231,11 @@ def thumbnail_image_show(user, user_id, checklist_id):
 
     checklist = Checklist.query.get(checklist_id)
 
-    if not checklist.thumbnail_image:
-        return abort(404, description="This checklist has no thumbnail image.")
-
     if user.id not in [member.id for member in checklist.users]:
         return abort(401, description="You do not have permission to view this checklist.")
+
+    if not checklist.thumbnail_image:
+        return abort(404, description="This checklist has no thumbnail image.")
 
     bucket = boto3.resource("s3").Bucket(current_app.config["AWS_S3_BUCKET"])
     filename = checklist.thumbnail_image

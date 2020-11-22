@@ -39,6 +39,19 @@ def get_user_checklists(user, user_id):
 @jwt_required
 @verify_user
 def checklist_create(user, user_id):
+    """
+    Creates a new checklist from input and adds to the checklists table
+
+    Parameters:
+    user: User
+        The user object for the user trying to make the request
+    user_id: integer
+        The id number of the current user
+
+    Returns:
+    Tuple containing the dict of the new checklist and status code
+    """
+
     checklist_fields = checklist_schema.load(request.json)
 
     new_checklist = Checklist()
@@ -49,13 +62,27 @@ def checklist_create(user, user_id):
     user.checklists.append(new_checklist)
     db.session.commit()
 
-    return jsonify(checklist_schema.dump(new_checklist))
+    return (jsonify(checklist_schema.dump(new_checklist)), 201)
 
 
 @checklists.route("/<int:checklist_id>", methods=["GET"])
 @jwt_required
 @verify_user
 def checklist_get(user, user_id, checklist_id):
+    """
+    Gets a single checklist for the user using an id number
+
+    Parameters:
+    user: User
+        The user object for the user trying to make the request
+    user_id: integer
+        The id number of the current user
+    checklist_id: integer
+        The checklist id number for the checklist to retrieve
+
+    Returns:
+    Dict of the retrieved checklist
+    """
 
     checklist = Checklist.query.get(checklist_id)
 
@@ -72,6 +99,21 @@ def checklist_get(user, user_id, checklist_id):
 @jwt_required
 @verify_user
 def checklist_update(user, user_id, checklist_id):
+    """
+    Updates a single checklist
+
+    Parameters:
+    user: User
+        The user object for the user trying to make the request
+    user_id: integer
+        The id number of the current user
+    checklist_id: integer
+        The checklist id number for the checklist to update
+
+    Returns:
+    Dict of the updated checklist
+    """
+
     checklist_fields = checklist_schema.load(request.json)
 
     checklists = Checklist.query.filter_by(id=checklist_id)
@@ -92,7 +134,22 @@ def checklist_update(user, user_id, checklist_id):
 @jwt_required
 @verify_user
 def checklist_delete(user, user_id, checklist_id):
-    
+    """
+    Deletes a single checklist from the database, this also removes it from related users
+    and deletes the checklists items
+
+    Parameters:
+    user: User
+        The user object for the user trying to make the request
+    user_id: integer
+        The id number of the current user
+    checklist_id: integer
+        The checklist id number for the checklist to delete
+
+    Returns:
+    Tuple containing a message of the response outcome and the dict of the removed item
+    """
+
     checklist = Checklist.query.get(checklist_id)
 
     if not checklist:
@@ -112,11 +169,13 @@ def checklist_delete(user, user_id, checklist_id):
 @verify_user
 def thumbnail_image_create(user, user_id, checklist_id):
     """
-    Uploads an image to S3 bucket and adds the filename to the thumbnail image column for the checklist
+    Uploads an image to S3 bucket and adds the filename to the checklist
 
     Parameters:
     user: User
         The user object for the user trying to make the request
+    user_id: integer
+        The id number of the current user
     checklist_id: integer
         The checklist id number for the checklist to update with a new image
 
@@ -158,6 +217,8 @@ def thumbnail_image_show(user, user_id, checklist_id):
     Parameters:
     user: User
         The user object for the user trying to make the request
+    user_id: integer
+        The id number of the current user
     checklist_id: integer
         The checklist id number that we are retrieving the thumbnail image for
 
@@ -192,6 +253,8 @@ def thumbnail_image_delete(user, user_id, checklist_id):
     Parameters:
     user: User
         The user object for the user trying to make the request
+    user_id: integer
+        The id number of the current user
     checklist_id: integer
         The checklist id number that we are deleting the thumbnail image for
 

@@ -90,7 +90,7 @@ def delete_user(user, user_id):
 @verify_user
 def profile_image_create(user, user_id):
     """
-    Uploads an image to S3 bucket and adds the filename to the profile image column for the user
+    Uploads an image to S3 bucket and adds the filename to the user
 
     Parameters:
     user: User

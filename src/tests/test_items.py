@@ -31,9 +31,16 @@ class TestItems(unittest.TestCase):
         checklist = random.choice(Checklist.query.all())
         user = User.query.get(checklist.owner_id)
         access_token = create_access_token(identity=str(user.id))
-        response = self.client.post(f"/users/{user.id}/checklists/{checklist.id}/items/", json={
-            "name": "test item", "index": random.randint(2, 10), "checklist_id": checklist.id
-        }, headers={"Authorization": f"Bearer {access_token}"})
+
+        response = self.client.post(f"/users/{user.id}/checklists/{checklist.id}/items/",
+                                    json={
+                                        "name": "test item",
+                                        "index": random.randint(2, 10),
+                                        "checklist_id": checklist.id
+                                    }, headers={
+                                        "Authorization": f"Bearer {access_token}"
+                                    })
+
         data = response.get_json()
 
         self.assertEqual(response.status_code, 201)
@@ -61,8 +68,12 @@ class TestItems(unittest.TestCase):
         checklist = Checklist.query.get(item.checklist_id)
         user = User.query.get(checklist.owner_id)
         access_token = create_access_token(identity=str(user.id))
+
         response = self.client.get(f"/users/{user.id}/checklists/{checklist.id}/items/{item.id}",
-        headers={"Authorization": f"Bearer {access_token}"})
+                                   headers={
+                                       "Authorization": f"Bearer {access_token}"
+                                   })
+
         data = response.get_json()
 
         self.assertEqual(response.status_code, 200)
@@ -74,9 +85,17 @@ class TestItems(unittest.TestCase):
         checklist = Checklist.query.get(item.checklist_id)
         user = User.query.get(checklist.owner_id)
         access_token = create_access_token(identity=str(user.id))
-        response = self.client.patch(f"/users/{user.id}/checklists/{checklist.id}/items/{item.id}", json={
-        "name": "changed name", "index": random.randint(2, 10), "status": not item.status, "checklist_id": checklist.id
-        }, headers={"Authorization": f"Bearer {access_token}"})
+
+        response = self.client.patch(f"/users/{user.id}/checklists/{checklist.id}/items/{item.id}",
+                                     json={
+                                         "name": "changed name",
+                                         "index": random.randint(2, 10),
+                                         "status": not item.status,
+                                         "checklist_id": checklist.id
+                                     }, headers={
+                                         "Authorization": f"Bearer {access_token}"
+                                     })
+
         data = response.get_json()
 
         self.assertEqual(response.status_code, 200)
@@ -95,8 +114,12 @@ class TestItems(unittest.TestCase):
         checklist = Checklist.query.get(item.checklist_id)
         user = User.query.get(checklist.owner_id)
         access_token = create_access_token(identity=str(user.id))
+
         response = self.client.delete(f"/users/{user.id}/checklists/{checklist.id}/items/{item.id}",
-        headers={"Authorization": f"Bearer {access_token}"})
+                                      headers={
+                                          "Authorization": f"Bearer {access_token}"
+                                      })
+
         data = response.get_json()
 
         self.assertEqual(response.status_code, 200)

@@ -11,11 +11,11 @@ def verify_user(function):
     Wrapper function to verify the user interacting with the API,
     they must be both a registered user and be making the request with their own user id
 
+    The variables passed in through the url path are located in kwargs dict
+
     Parameters:
     function: function
         The api route function being passed into the wrapper
-    kwargs: dict
-        The dict will contain keys for each id passed from the url route
 
     Returns:
     The wrapped function with the user that has veen verified as an argument of that function.

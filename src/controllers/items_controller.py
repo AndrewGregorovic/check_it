@@ -145,7 +145,7 @@ def item_update(user, user_id, checklist_id, item_id):
 
     # Only the checklist owner or the user assigned to the item can update it
     # If the item isn't assigned then any group member can update it too
-    if (user.id not in users) or (items[0].assigned_id is not None and user.id != items[0].assigned_id):
+    if (user.id not in users) or (items[0].assigned_id is not None and user.id not in (items[0].assigned_id, checklist.owner_id)):
         return abort(401, description="You do not have permission to update this item.")
 
     if items.count() != 1:
